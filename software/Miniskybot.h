@@ -27,8 +27,8 @@
 #include "WProgram.h"
 #endif
 
-#include "Miniskybot_motors.h"
-#include "Miniskybot_sensors.h"
+#include "./libraries/Miniskybot_motors.h"
+#include "./libraries/Miniskybot_sensors.h"
 #include "Configuration.h"
 
 
