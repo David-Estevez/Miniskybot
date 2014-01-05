@@ -1,4 +1,6 @@
 //-- Configuration.h
+#ifndef CONFIGURATION_H
+#define CONFIGURATION_H
 
 //-- Distance between wheels
 #define DIST_WHEEL 8.5
@@ -9,7 +11,7 @@
 #define MAX_SENSORS_IR 1
 
 //-- Table containing all the alpha and beta parameters pairs for all IR sensors
-const float CALIBRATION_PARAM[MAX_SENSORS_IR][2] = {
+static const float CALIBRATION_PARAM[MAX_SENSORS_IR][2] = {
 	{ 1, 1 } //-- Alpha1, Beta1
 };
 
@@ -23,7 +25,7 @@ const float CALIBRATION_PARAM[MAX_SENSORS_IR][2] = {
 //-- Table containing all the pairs (velocity/value)
 //-- Must be ordered from higher to lower values
 #define NUM_VALUES 13
-const float VELOCITY_TABLE[NUM_VALUES][2] = {
+static const float VELOCITY_TABLE[NUM_VALUES][2] = {
 	{ 14.5, 255 },
 	{ 12.5, 235},
 	{ 12.0, 215},
@@ -38,3 +40,5 @@ const float VELOCITY_TABLE[NUM_VALUES][2] = {
 	{  2.0,  55},
 	{  0.0,   0}
 };
+
+#endif //-- CONFIGURATION_H
