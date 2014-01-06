@@ -164,5 +164,109 @@ void MotorL293::emergencyBrake()
 	digitalWrite( _pinLeft, HIGH);
 	digitalWrite( _pinRight, HIGH);
 }
+//#######################################################//
+
+Servos::Servos( )
+{
+    _pin = -1;
+    _type = -1;
+
+    _speed = 0;
+    _forward = true;
+}
+
+
+//--------------------------------------
+//-- Initialize the motor object:
+//--------------------------------------
+
+void Servos::attach(int pin, int type)
+{
+    //-- Save the pin configuration
+    _pin = pin;
+    _type = type;
+    _servo.attach(_pin);
+}
+
+
+//---------------------------------------------------------
+//-- Sets motor velocity to a value between 0 and 255.
+//-- Sense is given by the sign of velocity.
+//---------------------------------------------------------
+
+void Servos::setVelocity( int velocity)
+{
+    //-- If pins are not assigned, don't execute any code
+    if ( _pin != -1 && _type != -1)
+    {
+        //-- Distinguish between forward / backwards movement
+        if ( velocity > 0 )
+        {
+            //-- Assign new values to variables:
+            if (_type==0){
+                _speed = -velocity;
+            }
+            else{
+                _speed = velocity;
+            }
+            _forward = true;
+
+        }
+        else if( velocity < 0 )
+        {
+            //-- Assign new values to variables:
+            if (_type==1){
+                _speed = velocity;
+            }
+            else{
+                _speed = -velocity;
+            }
+            _forward = false;
+        }
+        else if(velocity == 0){
+            _servo.detach();
+        }
+        //-- Set speed:
+        _servo.attach(_pin);
+        _servo.write(map(_speed,-10,10,0,180));
+    }
+}
+
+
+//---------------------------------------------------------
+//-- Sets motor velocity to a value between 0 and 255.
+//-- Sense is given explicitely by forward, velocity
+//-- should be positive.
+//---------------------------------------------------------
+
+void Servos::setVelocity( int velocity, bool forward)
+{
+    //-- If pins are not assigned, don't execute any code
+    if ( _pin != -1 && _pin != -1 && _pin != -1)
+    {
+        //-- Assign new values to variables:
+        _speed = abs(velocity);
+        _forward = forward;
+
+
+        //-- Send the correct signals to the H-bridge:
+        if ( _forward )
+        {
+            digitalWrite( _pin, LOW);
+            digitalWrite( _pin, HIGH);
+        }
+        else
+        {
+            digitalWrite( _pin, HIGH);
+            digitalWrite( _pin, LOW);
+        }
+
+        //-- Set speed:
+        analogWrite(  _pin, _speed);
+    }
+}
+
+
+
 
 

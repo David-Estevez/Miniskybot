@@ -23,6 +23,7 @@
 Miniskybot::Miniskybot()
 {
 	_num_motors = 0;
+    _num_servos = 0;
 	_num_US_sensor = 0;
 	_num_IR_sensor = 0;
 	
@@ -42,7 +43,14 @@ void Miniskybot::addMotor( int pinLeft, int pinRight, int pinEnable )
 		_num_motors++;
 	}
 }
-
+void Miniskybot::addServo( int pin, int type )
+{
+    if ( _num_servos < MAX_MOTORS)
+    {
+        servo[_num_servos].attach( pin, type);
+        _num_servos++;
+    }
+}
 
 void Miniskybot::addSensor( int type, int pin)
 {
@@ -101,7 +109,24 @@ void Miniskybot::motorControl( short value , int index)
 			motor[index].setVelocity( value );
 	}
 }
-
+//-- Gives a servo the control value [0-255]
+void Miniskybot::servoControl( short value , int index)
+{
+    if (index == -1 )
+    {
+        //-- Set velocity in all motors
+        for (int i = 0; i < _num_motors; i++)
+        {
+            servo[i].setVelocity( value);
+        }
+    }
+    else
+    {
+        //-- Set velocity in just one motor
+        if (index < _num_servos)
+            servo[index].setVelocity( value );
+    }
+}
 //-- Sets a motor with the velocity suggested
 void Miniskybot::motorVelocity( int velocity, int index)
 {

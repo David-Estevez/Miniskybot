@@ -43,15 +43,17 @@ class Miniskybot
 	//-----------------------------------------------------
 	//-- Add elements
 	void addMotor( int pinLeft, int pinRight, int pinEnable );
-
-	void addSensor( int type, int pin);
+    void addServo( int pin, int type);
+    void addSensor( int type, int pin);
 	void addSensor( int type, int pinTrigger, int pinEcho);
 
 	//-- Movement control:
 	//-----------------------------------------------------
 	//-- Access individual elements (or all if index == -1)
 	void motorControl( short value , int index = -1); //-- Gives a motor the control value [0-255] 
-	void motorVelocity( int velocity, int index = -1); //-- Sets a motor with the velocity suggested
+    void servoControl( short value , int index = -1); //-- Gives a motor the control value [0-255]
+
+    void motorVelocity( int velocity, int index = -1); //-- Sets a motor with the velocity suggested
 	
 	//-- Robot control
 	void move( float velocity, float angularVelocity);
@@ -65,6 +67,7 @@ class Miniskybot
 	
 	//-- Motors
 	MotorL293 motor[MAX_MOTORS];
+    Servos servo[MAX_MOTORS];
 	
 	//-- Sensors
 	SensorUS sensor_US[MAX_SENSORS_US];
@@ -72,6 +75,7 @@ class Miniskybot
 
 	//-- Counters
 	unsigned short _num_motors;
+    unsigned short _num_servos;
 	unsigned short _num_US_sensor;
 	unsigned short _num_IR_sensor;
 
