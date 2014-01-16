@@ -6,14 +6,15 @@
 Miniskybot renacuajo;
 void setup(){
 
- renacuajo.addServo(6,IZQUIERDA);
- renacuajo.addServo(9,DERECHA);
+ renacuajo.addServo(6,LEFT);
+ renacuajo.addServo(9,RIGHT);
+ renacuajo.addSensor(FOLLOW,8,LEFT);
+ renacuajo.addSensor(FOLLOW,7,RIGHT);
  pinMode(8,INPUT);
+ Serial.begin(9600);
 }
 
 void loop(){
-
-    renacuajo.servoControl(0,0);
-    renacuajo.servoControl(0,1);
-
+ //         renacuajo.servoControl(10,1);renacuajo.servoControl(10,0);
+ renacuajo.followLine();
 }
