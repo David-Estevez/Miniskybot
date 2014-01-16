@@ -6,7 +6,7 @@
 //-- this library.
 //--
 //-- This library takes charge of controlling the motors by means of a L293 dual
-//-- H-bridge circuit, but extra functions could be added to work with more types
+//-- H-bridge circuit, but extra functions could be added to work with more positions
 //-- of motors.
 //--
 //-- For more info, read README
@@ -169,7 +169,7 @@ void MotorL293::emergencyBrake()
 Servos::Servos( )
 {
     _pin = -1;
-    _type = -1;
+    _position = NONE ;
 
     _speed = 0;
     _forward = true;
@@ -180,30 +180,31 @@ Servos::Servos( )
 //-- Initialize the motor object:
 //--------------------------------------
 
-void Servos::attach(int pin, int type)
+void Servos::attach(int pin, pos position)
 {
     //-- Save the pin configuration
     _pin = pin;
-    _type = type;
+    _position = position;
     _servo.attach(_pin);
 }
 
 
 //---------------------------------------------------------
-//-- Sets motor velocity to a value between 0 and 255.
+//-- Sets motor velocity to a value between 0 and 10.
 //-- Sense is given by the sign of velocity.
 //---------------------------------------------------------
 
-void Servos::setVelocity( int velocity)
+void Servos::setVelocity( signed int velocity)
 {
     //-- If pins are not assigned, don't execute any code
-    if ( _pin != -1 && _type != -1)
+    if ( _pin != -1 && _position != -1)
     {
         //-- Distinguish between forward / backwards movement
         if ( velocity > 0 )
         {
+            _servo.attach(_pin);
             //-- Assign new values to variables:
-            if (_type==0){
+            if (_position==LEFT){
                 _speed = -velocity;
             }
             else{
@@ -214,8 +215,9 @@ void Servos::setVelocity( int velocity)
         }
         else if( velocity < 0 )
         {
+            _servo.attach(_pin);
             //-- Assign new values to variables:
-            if (_type==1){
+            if (_position==RIGHT){
                 _speed = velocity;
             }
             else{
@@ -227,7 +229,6 @@ void Servos::setVelocity( int velocity)
             _servo.detach();
         }
         //-- Set speed:
-        _servo.attach(_pin);
         _servo.write(map(_speed,-10,10,0,180));
     }
 }
@@ -239,33 +240,50 @@ void Servos::setVelocity( int velocity)
 //-- should be positive.
 //---------------------------------------------------------
 
-void Servos::setVelocity( int velocity, bool forward)
+void Servos::setVelocity( signed int velocity,bool sense)
 {
     //-- If pins are not assigned, don't execute any code
-    if ( _pin != -1 && _pin != -1 && _pin != -1)
+    if ( _pin != -1 && _position != -1)
     {
-        //-- Assign new values to variables:
-        _speed = abs(velocity);
-        _forward = forward;
-
-
-        //-- Send the correct signals to the H-bridge:
-        if ( _forward )
+        //-- Distinguish between forward / backwards movement
+        if ( sense = true )
         {
-            digitalWrite( _pin, LOW);
-            digitalWrite( _pin, HIGH);
-        }
-        else
-        {
-            digitalWrite( _pin, HIGH);
-            digitalWrite( _pin, LOW);
-        }
+            _servo.attach(_pin);
+            //-- Assign new values to variables:
+            if (_position==LEFT){
+                _speed = -1*velocity;
+            }
+            else{
+                _speed = velocity;
+            }
+            _forward = true;
 
+        }
+        else if( sense = false )
+        {
+            _servo.attach(_pin);
+            //-- Assign new values to variables:
+            if (_position==RIGHT){
+                _speed = velocity;
+            }
+            else{
+                _speed = -1*velocity;
+            }
+            _forward = false;
+        }
+        else if(velocity == 0){
+            _servo.detach();
+        }
         //-- Set speed:
-        analogWrite(  _pin, _speed);
+        _servo.write(map(_speed,-10,10,0,180));
+
     }
 }
-
+//-- Returns the position of the servo in the robot.
+pos Servos::getPosition()
+{
+    return _position;
+}
 
 
 

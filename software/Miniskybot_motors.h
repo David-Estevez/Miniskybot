@@ -24,13 +24,15 @@
 
 //-- Making it compatible with Arduino 1.0 and Arduino 22:
 //-- (source: http://forums.adafruit.com/viewtopic.php?f=25&t=24563 )
-#include <Servo.h>
+
+
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
 #else
 #include <WProgram.h>
 #endif
-
+#include "Configuration.h"
+#include <Servo.h>
 class MotorL293
 {
 	public:
@@ -78,18 +80,20 @@ class Servos
     Servos();
 
     //-- Setup function, attach to its pins:
-    void attach(int pin, int type);
+    void attach(int pin, pos position);
 
     //-- Set velocity of a motor ( 0-255 , if > 0 forward, if < 0 backwards)
-    void setVelocity( int velocity );
+    void setVelocity(signed int velocity );
 
     //-- Set velocity of a motor ( 0-255 , true -> forward, false -> backwards)
-    void setVelocity( int velocity , bool sense);
-
+    void setVelocity(signed int velocity , bool sense);
+    //-- Returns the position of the servo in the robot.
+    pos getPosition();
     private:
-    unsigned int _speed; //-- Speed of the motor (modulus)
+    signed int _speed; //-- Speed of the motor (modulus)
     bool _forward; //-- true if forwards, false if backwards
-    int _pin,_type; //-- Stores the pins for H-bridge connection
+    int _pin;
+    pos _position; //-- Stores the pins for H-bridge connection
     Servo _servo;  //-- Make a objet Servo to control the motor.
 
 };
