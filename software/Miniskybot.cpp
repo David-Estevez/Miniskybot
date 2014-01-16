@@ -43,11 +43,11 @@ void Miniskybot::addMotor( int pinLeft, int pinRight, int pinEnable )
 		_num_motors++;
 	}
 }
-void Miniskybot::addServo( int pin, int type )
+void Miniskybot::addServo( int pin, pos position )
 {
     if ( _num_servos < MAX_MOTORS)
     {
-        servo[_num_servos].attach( pin, type);
+        servo[_num_servos].attach( pin, position);
         _num_servos++;
     }
 }
@@ -71,6 +71,7 @@ void Miniskybot::addSensor( int type, int pin)
 			_num_US_sensor++;
 		}
 	}
+
 }
 
 
@@ -86,6 +87,16 @@ void Miniskybot::addSensor( int type, int pinTrigger, int pinEcho)
 	}
 }
 
+void Miniskybot::addSensor( int type, int pin, pos position)
+{
+    if (type == FOLLOW){
+        if (_num_FOLLOW_sensor < MAX_SENSORS_FOLLOW){
+            sensor_FOLLOW[_num_FOLLOW_sensor].attach( pin,position);
+            _num_FOLLOW_sensor++;
+        }
+    }
+
+}
 
 //-- Movement control:
 //-----------------------------------------------------
@@ -110,7 +121,7 @@ void Miniskybot::motorControl( short value , int index)
 	}
 }
 //-- Gives a servo the control value [0-255]
-void Miniskybot::servoControl( short value , int index)
+void Miniskybot::servoControl( signed int value , int index)
 {
     if (index == -1 )
     {
@@ -134,14 +145,14 @@ void Miniskybot::motorVelocity( int velocity, int index)
 	short value = lookUp(velocity);
 
 	//-- Sets that value
-	motorControl(value , index);
+    motorControl(value , index);
 }
 
 //-- Robot control
 void Miniskybot::move( float velocity, float angularVelocity)
 {
 	//-- This function gives priority to turning over linear speed
-
+    float v_left, v_right;
 	//-- This action can only be executed with two wheels
 	if( _num_motors == MAX_MOTORS )
 	{
@@ -158,7 +169,7 @@ void Miniskybot::move( float velocity, float angularVelocity)
 		if ( abs(velocity) > linear_max) { velocity > 0 ? velocity = linear_max : velocity = -linear_max;}
 
 		//-- Calculate the needed speed of each wheel:
-		float v_left, v_right;
+
 		v_right = velocity + angularVelocity * DIST_WHEEL / 2.0;
 		v_left = velocity - angularVelocity * DIST_WHEEL / 2.0;
 
@@ -171,7 +182,23 @@ void Miniskybot::move( float velocity, float angularVelocity)
 		motor[0].setVelocity( value_left);
 		motor[1].setVelocity( -value_right);
 	}
-	
+    else if ( _num_servos == MAX_MOTORS)
+        v_right = (velocity - angularVelocity)/ 2.0;
+        v_left = (velocity + angularVelocity)/ 2.0;
+        if(servo[0].getPosition() == LEFT){
+
+            servo[0].setVelocity(v_left);
+        }
+        else{
+            servo[0].setVelocity(v_right);
+        }
+        if(servo[1].getPosition() == LEFT){
+
+            servo[1].setVelocity(v_left);
+        }
+        else{
+            servo[1].setVelocity(v_right);
+        }
 }
 
 //-- Sensor data:
@@ -217,7 +244,32 @@ short Miniskybot::lookUp( float target)
 	return VELOCITY_TABLE[middle][1];
 }
 
-
+//----------------------------------------------------
+void Miniskybot::followLine()
+{
+    bool s_left,s_right;
+    //-- Read the value of every sensor.
+   for (int i =0;i<MAX_SENSORS_FOLLOW;i++){
+    if( sensor_FOLLOW[i].getPosition() == LEFT )
+        s_left = sensor_FOLLOW[i].getValue();
+    else{
+        s_right = sensor_FOLLOW[i].getValue();
+    }
+   }
+    Serial.print("Sensor izquierda = ");
+    Serial.println(s_left);
+    Serial.print("Sensor derecha = ");
+    Serial.println(s_right);
+    //-- Execute the control of the robot
+    if (s_left == BLACK && s_right == BLACK){
+         move(10,0);}
+    else if (s_left == WHITE && s_right == BLACK){
+         move(10,10);}
+    else if (s_left == BLACK && s_right == WHITE){
+         move(10,-10);}
+    else{
+         move(0,0);}
+}
 
 
 

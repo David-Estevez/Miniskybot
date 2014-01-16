@@ -43,25 +43,32 @@ class Miniskybot
 	//-----------------------------------------------------
 	//-- Add elements
 	void addMotor( int pinLeft, int pinRight, int pinEnable );
-    void addServo( int pin, int type);
+    void addServo( int pin, pos position);
     void addSensor( int type, int pin);
-	void addSensor( int type, int pinTrigger, int pinEcho);
+    void addSensor( int type, int pinTrigger, int pinEcho);
+    void addSensor( int type, int pin,pos position);
 
 	//-- Movement control:
 	//-----------------------------------------------------
 	//-- Access individual elements (or all if index == -1)
 	void motorControl( short value , int index = -1); //-- Gives a motor the control value [0-255] 
-    void servoControl( short value , int index = -1); //-- Gives a motor the control value [0-255]
+    void servoControl( signed int value , int index = -1); //-- Gives a motor the control value [0-255]
 
     void motorVelocity( int velocity, int index = -1); //-- Sets a motor with the velocity suggested
 	
 	//-- Robot control
 	void move( float velocity, float angularVelocity);
+    //-- Follow a black line.
+    void followLine();
+
+
 
 	//-- Sensor data:
 	//----------------------------------------------------
 	float getDistance( int type, int sensor );
 
+    //-- CNY70
+    bool getLine(int index);
 
 	private:
 	
@@ -72,12 +79,14 @@ class Miniskybot
 	//-- Sensors
 	SensorUS sensor_US[MAX_SENSORS_US];
 	SensorIR sensor_IR[MAX_SENSORS_IR];
+    SensorFOLLOW sensor_FOLLOW[MAX_SENSORS_FOLLOW];
 
 	//-- Counters
 	unsigned short _num_motors;
     unsigned short _num_servos;
 	unsigned short _num_US_sensor;
 	unsigned short _num_IR_sensor;
+    unsigned short _num_FOLLOW_sensor;
 
 	//-- Currentp velocities:
 	float _velocity, _angularVelocity;	
