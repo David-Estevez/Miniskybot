@@ -104,4 +104,28 @@ class SensorFOLLOW
     int _pin;
     pos _position;
 };
+
+
+class SensorLIGHT
+
+{
+    public:
+
+    //-- Constructor
+    SensorLIGHT();
+
+    //-- Attach the sensor to the pin
+    void attach( int pinSignal,pos position); //-- For 3-wire US sensors (single trigger/echo)
+
+    //-- Read value:
+    int getValue();
+
+    //-- Returns the position of the sensor in the robot.
+    pos getPosition();
+
+
+    private:
+    int _pin;
+    pos _position;
+};
 #endif // Mini_sensors_h#include <WProgram.h>

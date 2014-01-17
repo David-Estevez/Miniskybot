@@ -95,6 +95,12 @@ void Miniskybot::addSensor( int type, int pin, pos position)
             _num_FOLLOW_sensor++;
         }
     }
+    else if (type == LIGHT){
+        if (_num_LIGHT_sensor < MAX_SENSORS_LIGHT){
+            sensor_LIGHT[_num_LIGHT_sensor].attach( pin,position);
+            _num_LIGHT_sensor++;
+        }
+    }
 
 }
 
@@ -247,6 +253,11 @@ short Miniskybot::lookUp( float target)
 //----------------------------------------------------
 void Miniskybot::followLine()
 {
+    int state = 0;
+    // 0 = Search for a line
+    // 1 = Move forward
+    // 2 = Move right
+    // 3 = Move left
     bool s_left,s_right;
     //-- Read the value of every sensor.
    for (int i =0;i<MAX_SENSORS_FOLLOW;i++){
@@ -256,21 +267,43 @@ void Miniskybot::followLine()
         s_right = sensor_FOLLOW[i].getValue();
     }
    }
-    Serial.print("Sensor izquierda = ");
-    Serial.println(s_left);
-    Serial.print("Sensor derecha = ");
-    Serial.println(s_right);
     //-- Execute the control of the robot
-    if (s_left == BLACK && s_right == BLACK){
-         move(10,0);}
-    else if (s_left == WHITE && s_right == BLACK){
-         move(10,10);}
-    else if (s_left == BLACK && s_right == WHITE){
-         move(10,-10);}
-    else{
-         move(0,0);}
+    if (s_left == BLACK && s_right == BLACK){  //-- Move to forward
+         state = 1;}
+    else if (s_left == WHITE && s_right == BLACK){ //-- Move to right
+         state = 2;}
+    else if (s_left == BLACK && s_right == WHITE){ //-- Move to left
+         state = 3;}
+    else if (s_left == WHITE && s_right == WHITE){ //-- Search a line
+          state = 0;
+    }
+    switch (state){
+        case 0:
+            move(1,2);
+            break;
+        case 1:
+            move(10,0);
+            break;
+        case 2:
+            move(10,10);
+            break;
+        case 3:
+            move(10,-10);
+            break;
+        default :
+            move(0,0);
+            break;
+    }
 }
+int Miniskybot::getLight(int sensor )
+{
 
+        if ( sensor < _num_LIGHT_sensor )
+            return sensor_LIGHT[sensor].getValue();
+        else
+            return -1;
+
+}
 
 
 

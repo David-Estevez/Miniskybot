@@ -66,7 +66,7 @@ class Miniskybot
 	//-- Sensor data:
 	//----------------------------------------------------
 	float getDistance( int type, int sensor );
-
+    int getLight(int sensor );
     //-- CNY70
     bool getLine(int index);
 
@@ -80,6 +80,7 @@ class Miniskybot
 	SensorUS sensor_US[MAX_SENSORS_US];
 	SensorIR sensor_IR[MAX_SENSORS_IR];
     SensorFOLLOW sensor_FOLLOW[MAX_SENSORS_FOLLOW];
+    SensorLIGHT sensor_LIGHT[MAX_SENSORS_LIGHT];
 
 	//-- Counters
 	unsigned short _num_motors;
@@ -87,6 +88,7 @@ class Miniskybot
 	unsigned short _num_US_sensor;
 	unsigned short _num_IR_sensor;
     unsigned short _num_FOLLOW_sensor;
+    unsigned short _num_LIGHT_sensor;
 
 	//-- Currentp velocities:
 	float _velocity, _angularVelocity;	
