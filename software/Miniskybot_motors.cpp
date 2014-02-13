@@ -6,7 +6,7 @@
 //-- this library.
 //--
 //-- This library takes charge of controlling the motors by means of a L293 dual
-//-- H-bridge circuit, but extra functions could be added to work with more types
+//-- H-bridge circuit, but extra functions could be added to work with more positions
 //-- of motors.
 //--
 //-- For more info, read README
@@ -164,5 +164,127 @@ void MotorL293::emergencyBrake()
 	digitalWrite( _pinLeft, HIGH);
 	digitalWrite( _pinRight, HIGH);
 }
+//#######################################################//
+
+Servos::Servos( )
+{
+    _pin = -1;
+    _position = NONE ;
+
+    _speed = 0;
+    _forward = true;
+}
+
+
+//--------------------------------------
+//-- Initialize the motor object:
+//--------------------------------------
+
+void Servos::attach(int pin, pos position)
+{
+    //-- Save the pin configuration
+    _pin = pin;
+    _position = position;
+    _servo.attach(_pin);
+}
+
+
+//---------------------------------------------------------
+//-- Sets motor velocity to a value between 0 and 10.
+//-- Sense is given by the sign of velocity.
+//---------------------------------------------------------
+
+void Servos::setVelocity( signed int velocity)
+{
+    //-- If pins are not assigned, don't execute any code
+    if ( _pin != -1 && _position != -1)
+    {
+        //-- Distinguish between forward / backwards movement
+        if ( velocity > 0 )
+        {
+            _servo.attach(_pin);
+            //-- Assign new values to variables:
+            if (_position==LEFT){
+                _speed = -velocity;
+            }
+            else{
+                _speed = velocity;
+            }
+            _forward = true;
+
+        }
+        else if( velocity < 0 )
+        {
+            _servo.attach(_pin);
+            //-- Assign new values to variables:
+            if (_position==RIGHT){
+                _speed = velocity;
+            }
+            else{
+                _speed = -velocity;
+            }
+            _forward = false;
+        }
+        else if(velocity == 0){
+            _servo.detach();
+        }
+        //-- Set speed:
+        _servo.write(map(_speed,-10,10,0,180));
+    }
+}
+
+
+//---------------------------------------------------------
+//-- Sets motor velocity to a value between 0 and 255.
+//-- Sense is given explicitely by forward, velocity
+//-- should be positive.
+//---------------------------------------------------------
+
+void Servos::setVelocity( signed int velocity,bool sense)
+{
+    //-- If pins are not assigned, don't execute any code
+    if ( _pin != -1 && _position != -1)
+    {
+        //-- Distinguish between forward / backwards movement
+        if ( sense = true )
+        {
+            _servo.attach(_pin);
+            //-- Assign new values to variables:
+            if (_position==LEFT){
+                _speed = -1*velocity;
+            }
+            else{
+                _speed = velocity;
+            }
+            _forward = true;
+
+        }
+        else if( sense = false )
+        {
+            _servo.attach(_pin);
+            //-- Assign new values to variables:
+            if (_position==RIGHT){
+                _speed = velocity;
+            }
+            else{
+                _speed = -1*velocity;
+            }
+            _forward = false;
+        }
+        else if(velocity == 0){
+            _servo.detach();
+        }
+        //-- Set speed:
+        _servo.write(map(_speed,-10,10,0,180));
+
+    }
+}
+//-- Returns the position of the servo in the robot.
+pos Servos::getPosition()
+{
+    return _position;
+}
+
+
 
 

@@ -220,4 +220,86 @@ float SensorUS::getLength()
 	}
 }
 	
+//################################################################################
+//################################################################################
+//-- SensorFOLLOW members
+//################################################################################
+//################################################################################
 
+//-- Constructor
+SensorFOLLOW:: SensorFOLLOW()
+{
+    _pin = -1;
+    _position = NONE;
+}
+
+//-- Attach the sensor to a pin
+void SensorFOLLOW::attach(int pin,pos position)	{
+    _pin = pin;
+    _position = position;
+}
+
+
+//-- Get the value measure from the arduino
+bool SensorFOLLOW::getValue()
+{
+    //-- If pin not assigned, return -1
+    if (_pin != -1)
+    {
+        //-- Read the digital pin:
+        return digitalRead(_pin);
+
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+//-- Returns the position of the sensor in the robot.
+pos SensorFOLLOW::getPosition()
+{
+    return _position;
+}
+
+//################################################################################
+//################################################################################
+//-- SensorLIGHT members
+//################################################################################
+//################################################################################
+
+//-- Constructor
+SensorLIGHT:: SensorLIGHT()
+{
+    _pin = -1;
+    _position = NONE;
+}
+
+//-- Attach the sensor to a pin
+void SensorLIGHT::attach(int pin,pos position)	{
+    _pin = pin;
+    _position = position;
+}
+
+
+//-- Get the value measure from the arduino
+int SensorLIGHT::getValue()
+{
+    //-- If pin not assigned, return -1
+    if (_pin != -1)
+    {
+        //-- Read the digital pin:
+        return analogRead(_pin);
+
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+//-- Returns the position of the sensor in the robot.
+pos SensorLIGHT::getPosition()
+{
+    return _position;
+}
